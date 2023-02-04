@@ -1,0 +1,13 @@
+Menu po zalogowaniu się + oldFiles - W miarę ogarnięte ++++
+
+Gui zależy od tego kto się loguje-> lekarz czy user( lekarz ma user.docid)
+
+
+Widok wizyt
+MOŻE : odwoływanie wizyt przez lekarza
+WYLOGOWANIE
+
+
+PACJENT
+Rezerwacja wizyty
+Odwołanie wizyty

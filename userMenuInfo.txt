@@ -1,0 +1,9 @@
+[1] Zapisz się na wizytę
+[2] Sprawdź wolne wizyty dla szukanej specjalizacji
+[3] Zmiana terminu wizyty
+[4] Odwołanie wizyty
+[5] Wyświetl lekarzy po danej specjalizacji
+[6] Sprawdź swój terminarz
+[7] Wyświetl wiadomości o autorach aplikacji
+[8] Usuń konto
+[9] Wyloguj

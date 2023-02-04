@@ -1,0 +1,5 @@
+[1] Stwórz pustą wizytę
+[2] Sprawdź swój terminarz
+[3] Wyświetl wiadomość o autorach aplikacji
+[4] Usuń konto
+[5] Wyloguj
