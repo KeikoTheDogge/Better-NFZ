@@ -7,6 +7,10 @@ import jakarta.persistence.*;
                 @NamedQuery(
                         name = "docSpec",
                         query = "from DoctorsEntity e where e.specialization = :specialization"
+                ),
+                @NamedQuery(
+                        name = "docInfo",
+                        query = "from DoctorsEntity e where e.userId = :userId"
                 )
         }
 )

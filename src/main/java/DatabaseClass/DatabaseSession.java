@@ -9,7 +9,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Klasa sesji z bazą danych. Posiada dwie metody: open session, która otwiera sesję z bazą oraz close session,
+ * Klasa sesji z bazą danych. Posiada dwie metody: openSession, która otwiera sesję z bazą oraz closeSession,
  * która zamyka sesję z bazą.
  */
 public class DatabaseSession {
@@ -18,14 +18,18 @@ public class DatabaseSession {
     private EntityManager entityManager;
     private Session session;
 
+    /**
+     * Metoda openSession otwiera sesję z bazą danych.
+     */
     public void openSession() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("default");
-        entityManager = entityManagerFactory.createEntityManager();
-        session = entityManager.unwrap(Session.class);
-
+        // kod, który ukrywa logi pokazujące się w konsoli podczas łączenia się programu z bazą danych
         LogManager logManager = LogManager.getLogManager();
         Logger logger = logManager.getLogger("");
         logger.setLevel(Level.SEVERE);
+
+        entityManagerFactory = Persistence.createEntityManagerFactory("default");
+        entityManager = entityManagerFactory.createEntityManager();
+        session = entityManager.unwrap(Session.class);
     }
 
     public Session getSession() {
@@ -36,16 +40,29 @@ public class DatabaseSession {
         return entityManager;
     }
 
+    /**
+     * Metoda zapisuje obiekt w bazie danych
+     *
+     * @param entityObject: dowolny obiekt, który chcemy zapisać
+     */
     public void saveObject(Object entityObject) {
         session.save(entityObject);
     }
 
+    /**
+     * Metoda usuwa obiekt z bazy danych
+     *
+     * @param entityObject: dowolny obiekt entity, który chcemy usunąć
+     */
     public void deleteObject(Object entityObject) {
         Transaction transaction = session.beginTransaction();
         session.remove(entityObject);
         transaction.commit();
     }
 
+    /**
+     * Metoda zamyka sesję z bazą danych
+     */
     public void closeSession() {
         session.close();
         entityManager.close();

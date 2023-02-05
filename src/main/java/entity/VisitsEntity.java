@@ -10,18 +10,20 @@ import java.sql.Time;
                         query="select v, u from VisitsEntity v inner join UsersEntity u on v.doctorId = u.id " +
                                 "inner join DoctorsEntity d on u.id = d.userId where d.specialization = :spec " +
                                 "and v.patientId = null"),
-                //@org.hibernate.annotations.NamedQuery(name="getVisitByDoctorId",
-                        //query="select v from VisitsEntity v inner join UsersEntity u where u.id = :doctorId"),
+                @org.hibernate.annotations.NamedQuery(name="getVisitByDoctorId",
+                        query="select v from VisitsEntity v inner join UsersEntity u where u.id = :doctorId"),
+                @org.hibernate.annotations.NamedQuery(name="getVisitByPatientId",
+                        query="select v from VisitsEntity v where v.patientId = :patientId"),
                 @org.hibernate.annotations.NamedQuery(name="getCollideVisits",
                         query="from VisitsEntity where doctorId = :doctorId and date = :visitDate " +
-                                "and (:timeStart >= timeFrom AND :timeStart < timeTo) " +
-                                "OR (:timeEnd > timeFrom AND :timeEnd <= timeTo)"),
+                                "and ((:timeStart >= timeFrom AND :timeStart < timeTo) " +
+                                "OR (:timeEnd > timeFrom AND :timeEnd <= timeTo))"),
                 //@org.hibernate.annotations.NamedQuery(name="getShowVisit",
                         //query = "from VisitsEntity where doctorId = :doctorId and date = :date"),
                 @org.hibernate.annotations.NamedQuery(name="getDoctorSchuedule",
                         query = "from VisitsEntity where doctorId = :doctorId"),
                 @org.hibernate.annotations.NamedQuery(name="getPatientSchuedule",
-                        query = "select v from VisitsEntity v, DoctorsEntity d " +
+                        query = "select v, d from VisitsEntity v inner join DoctorsEntity d " +
                                 "where v.patientId = :patientId and d.userId = v.doctorId")
         }
 )

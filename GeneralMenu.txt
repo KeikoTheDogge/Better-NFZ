@@ -1,0 +1,4 @@
+Witaj w Better NFZ! Co chcesz dzisiaj zrobić?
+[1] Zaloguj się
+[2] Załóż konto
+[3] Zakończ działanie programu

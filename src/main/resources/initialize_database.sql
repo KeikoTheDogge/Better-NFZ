@@ -41,16 +41,7 @@ insert into doctors(userID, specialization) VALUES (2, 'kardiolog');
 insert into users(userID, login, password, name, surname) VALUES (3, 'gorzala', 'dupa', 'Marian', 'Gorzala');
 insert into doctors(userID, specialization) VALUES (3, 'chirurg');
 
-insert into visits(visitId, date, time, doctorId)
-values
-(1, '2023-01-24', '12:00:00', 2),
-(2, '2023-01-24', '12:30:00', 2),
-(3, '2023-01-24', '13:00:00', 2),
-(4, '2023-01-24', '13:30:00', 2);
+insert into users(userID, login, password, name, surname) VALUES (4, 'aniaderm', 'dupa', 'Anna', 'Kowalska');
+insert into doctors(userID, specialization) VALUES (4, 'dermatolog');
 
-insert into visits(visitId, date, time, doctorId)
-values
-    (5, '2023-01-24', '15:00:00', 3),
-    (6, '2023-01-24', '15:30:00', 3),
-    (7, '2023-01-24', '16:00:00', 3),
-    (8, '2023-01-24', '16:30:00', 3);
+insert into visits(visitId, date, time_from, time_to, type, doctorId, patientId) VALUES (1, '2023-12-12', '15:00', '15:15', 'PORADA', 4, 1)

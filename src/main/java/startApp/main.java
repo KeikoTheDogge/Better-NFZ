@@ -3,13 +3,18 @@ package startApp;
 import Login.Authentication;
 import Login.Password;
 import Login.Registration;
-import Schedules.DocSchedule;
+import Login.RegistrationCommand;
+import Schedules.Schuedules;
 import Visits.CreateVisitByDoc;
 import DatabaseClass.DatabaseSession;
 import DatabaseClass.showDocSpec;
+import Visits.DeleteVisitbyDoc;
+import Visits.RegisterforVisit;
+import Visits.ShowAvailableVisits;
 import entity.DoctorsEntity;
 import entity.PatientsEntity;
 import entity.UsersEntity;
+import Reader.MenuReader;
 import jakarta.persistence.*;
 
 import java.io.*;
@@ -26,37 +31,81 @@ public class main {
         databaseSession.openSession();
         label:
         while (true) {
-            System.out.println("Wybierz [1] aby się zalogować. Wybierz [2] aby założyć konto. [3] aby zakończyć działanie programu");
+            MenuReader.readFile("GeneralMenu.txt");
             String answer1 = scanner.next();
             switch (answer1) {
                 case "1": {
                     Authentication authentication = new Authentication(databaseSession);
                     UsersEntity user;
-                    System.out.println("Podaj login");
+                    System.out.println("Podaj login:");
                     String login = scanner.next();
-                    System.out.println("Podaj hasło");
+                    System.out.println("Podaj hasło:");
                     String password = scanner.next();
                     try {
                         user = authentication.authenticate(login, password);
                         int logout = 1;
                         if (user instanceof PatientsEntity) {
                             do {
-                                System.out.println("Witaj pacjencie " + user.getSurname() + " Wybierz operację.");
-                                try (BufferedReader br = new BufferedReader(new FileReader("userMenuInfo.txt"))) {
-                                    String line = br.readLine();
-                                    while (line != null) {
-                                        System.out.println(line);
-                                        line = br.readLine();
-                                    }
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-
+                                System.out.println("Witaj pacjencie " + user.getSurname() + ". Co chcesz dzisiaj zrobić?");
+                                MenuReader.readFile("userMenuInfo.txt");
                                 String answer2 = scanner.next();
                                 switch (answer2) {
-                                    case "1", "2", "3", "4", "6" -> System.out.println("work in progress");
+                                    case "1" -> {
+                                        System.out.println("nie ma");
+                                        int myId = user.getUserId();
+                                        System.out.println("podaj nr id wizyty, która cię interesuje lub x jeśli chcesz " +
+                                                "anulować: (aby zobaczyć wolne wizyty dla specjalizacji wybierz 5)");
+                                        String answeridorx = scanner.next();
+                                        if(answeridorx.equals("x")) {
+                                            break;
+                                        } else{
+                                            RegisterforVisit registerforVisit = new RegisterforVisit(databaseSession);
+                                            registerforVisit.SignupUser(Integer.parseInt(answeridorx),myId);
+                                        }
+                                    }
+                                    case "4" -> {
+                                        System.out.println("nie ma");
+                                        int myId = user.getUserId();
+                                        System.out.println("podaj nr id wizyty, którą chcesz odwołać lub x " +
+                                                "jeśli chcesz anulować: (aby zobaczyć swoe wizyty wybierz 2)");
+                                        String answeridorx = scanner.next();
+                                        if(answeridorx.equals("x")){
+                                            break;
+                                        } else{
+                                            RegisterforVisit registerforVisit = new RegisterforVisit(databaseSession);
+                                            registerforVisit.CancelVisit(Integer.parseInt(answeridorx),myId);
+                                        }
+                                    }
+                                    case "3" -> {
+                                        System.out.println("nie ma");
+                                        int myId = user.getUserId();
+                                        System.out.println("podaj nr id wizyty, której datę chcesz zmienić lub x " +
+                                                "jeśli chcesz anulować: (aby zobaczyć wolne wizyty dla specjalizacji wybierz 5)");
+                                        String answeridorx = scanner.next();
+                                        if(answeridorx.equals("x")){
+                                            break;
+                                        } else{
+                                            RegisterforVisit registerforVisit = new RegisterforVisit(databaseSession);
+                                            registerforVisit.CancelVisit(Integer.parseInt(answeridorx),myId);
+                                        }
+                                        System.out.println("podaj nr id wizyty na którą chcesz się zapisać lub x " +
+                                                "jeśli chcesz anulować: (aby zobaczyć wolne wizyty dla specjalizacji wybierz 5) ");
+                                        answeridorx = scanner.next();
+                                        if (answeridorx.equals("x")){
+                                            break;
+                                        }else{
+                                            RegisterforVisit registerforVisit = new RegisterforVisit(databaseSession);
+                                            registerforVisit.SignupUser(Integer.parseInt(answeridorx),myId);
+                                        }
+                                    }
+                                    case "2" -> {
+                                        System.out.println("Podaj specjalizację, aby zobaczyć wolne terminy wizyt:");
+                                        String specialization = scanner.next();
+                                        ShowAvailableVisits show = new ShowAvailableVisits(databaseSession);
+                                        show.showAvailableVisits(specialization);
+                                    }
                                     case "5" -> {
-                                        System.out.println("Podaj specjalizację, która cię interesuje");
+                                        System.out.println("Podaj specjalizację, która cię interesuje:");
                                         String specialization = scanner.next();
                                         showDocSpec specs = new showDocSpec();
                                         List<DoctorsEntity> lekarze = specs.specDoctor(specialization);
@@ -64,70 +113,95 @@ public class main {
                                             System.out.println(lekarz.getSpecialization() + " " + lekarz.getName() + " " + lekarz.getSurname());
                                         }
                                     }
+                                    case "6" -> {
+                                        Schuedules schedule = new Schuedules(databaseSession);
+                                        schedule.patientSchuedule(user.getUserId());
+                                    }
                                     case "7" -> {
                                         System.out.println("Adam Malinowski [index]");
-                                        System.out.println("Julia Weber [index]");
+                                        System.out.println("Julia Weber [261659]");
                                         System.out.println("Tymoteusz Całka [261800]");
                                     }
                                     case "8" -> {
-                                        System.out.println("Podaj swój login");
+                                        System.out.println("Podaj swój login:");
                                         String delLogin = scanner.next();
-                                        System.out.println("Podaj swoje hasło");
+                                        System.out.println("Podaj swoje hasło:");
                                         String delPass = scanner.next();
-                                        registration.deletePatientUser((PatientsEntity) user);
-                                        logout = 0;
+                                        if (delLogin.equals(user.getLogin()) && delPass.equals(user.getPassword())) {
+                                            registration.deletePatientUser((PatientsEntity) user);
+                                            logout = 0;
+                                        } else {
+                                            System.out.println("Błędne hasło lub login - konto nie zostało usunięte.");
+                                        }
                                     }
                                     case "9" -> {
                                         logout = 0;
                                     }
                                     default ->
-                                            System.out.println("Zły wybór. Aby kontynuować wybierz poprawną cyfrę z menu:");
+                                            System.out.println("Zły wybór - aby kontynuować wybierz poprawną cyfrę z menu:");
                                 }
                             } while (logout != 0);
 
                         } else {
                             do {
-                                System.out.println("Witaj doktorze " + user.getSurname() + " Wybierz operację");
-
-                                try (BufferedReader br = new BufferedReader(new FileReader("docMenuInfo.txt"))) {
-                                    String line = br.readLine();
-                                    while (line != null) {
-                                        System.out.println(line);
-                                        line = br.readLine();
-                                    }
-                                } catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-
+                                System.out.println("Witaj doktorze " + user.getSurname() + ". Co chcesz dzisiaj zrobić?");
+                                MenuReader.readFile("docMenuInfo.txt");
                                 String answer3 = scanner.next();
                                 switch (answer3) {
                                     case "1" -> {
                                         CreateVisitByDoc createVisitByDoc = new CreateVisitByDoc(databaseSession);
                                         createVisitByDoc.promptDoctorForNewVisit(user.getUserId());
-
                                     }
                                     case "2" -> {
-                                        DocSchedule docSchedule = new DocSchedule(databaseSession);
-                                        docSchedule.schuedule(user.getUserId());
+                                        Schuedules docSchedule = new Schuedules(databaseSession);
+                                        docSchedule.docSchuedule(user.getUserId());
                                     }
                                     case "3" -> {
                                         System.out.println("Adam Malinowski [index]");
-                                        System.out.println("Julia Weber [index]");
+                                        System.out.println("Julia Weber [261659]");
                                         System.out.println("Tymoteusz Całka [261800]");
                                     }
                                     case "4" -> {
-                                        System.out.println("Podaj swój login");
-                                        String delLogin = scanner.next();
-                                        System.out.println("Podaj swoje hasło");
-                                        String delPass = scanner.next();
-                                        registration.deleteDoctorUser((DoctorsEntity) user);
-                                        logout = 0;
+                                        System.out.println("nie ma");
+                                        int myId = user.getUserId();
+                                        System.out.println("podaj nr id wizyty, której datę chcesz zmienić lub x " +
+                                                "" + "jeśli chcesz anulować: (aby zobaczyć wolne wizyty dla specjalizacji wybierz 5)");
+                                        String answeridorx = scanner.next();
+                                        if(answeridorx.equals("x")){
+                                            break;
+                                        } else{
+                                            DeleteVisitbyDoc deleteVisitbyDoc = new DeleteVisitbyDoc(databaseSession);
+                                            if(deleteVisitbyDoc.CheckifEmpty(Integer.parseInt(answeridorx)) == 0){
+                                                System.out.println("can't delete a visit already occupied place the patient into a diffrent one");
+                                                int idPatient = deleteVisitbyDoc.GetPatientId(Integer.parseInt(answeridorx),myId);
+                                                RegisterforVisit registerforVisit = new RegisterforVisit(databaseSession);
+                                                deleteVisitbyDoc.DeleteVisit(Integer.parseInt(answeridorx),myId);
+                                                System.out.println("Podaj nr id wizyty do której chcesz przypisać pacjenta");
+                                                int visitid2 = scanner.nextInt();
+                                                scanner.nextLine();
+                                                registerforVisit.SignupUser(visitid2,idPatient);
+                                            }else{
+                                                deleteVisitbyDoc.DeleteVisit(Integer.parseInt(answeridorx),myId);
+                                            }
+                                        }
                                     }
                                     case "5" -> {
+                                        System.out.println("Podaj swój login:");
+                                        String delLogin = scanner.next();
+                                        System.out.println("Podaj swoje hasło:");
+                                        String delPass = scanner.next();
+                                        if (delLogin.equals(user.getLogin()) && delPass.equals(user.getPassword())) {
+                                            registration.deleteDoctorUser((DoctorsEntity) user);
+                                            logout = 0;
+                                        } else {
+                                            System.out.println("Błędne hasło lub login - konto nie zostało usunięte");
+                                        }
+                                    }
+                                    case "6" -> {
                                         logout = 0;
                                     }
                                     default ->
-                                            System.out.println("Zły wybór. Aby kontynuować wybierz poprawną cyfrę z menu:");
+                                            System.out.println("Zły wybór - aby kontynuować wybierz poprawną cyfrę z menu:");
                                 }
                             } while (logout != 0);
                         }
@@ -137,16 +211,8 @@ public class main {
                     break;
                 }
                 case "2": {
-                    System.out.println("Podaj swoje imię ");
-                    String name = scanner.next();
-                    System.out.println("Podaj swoje nazwisko ");
-                    String surname = scanner.next();
-                    System.out.println("Podaj login jakim chcesz się posługiwać");
-                    String login = scanner.next();
-                    System.out.println("Podaj hasło jakim chcesz się posługiwać");
-                    String pass = scanner.next();
-                    Password password = new Password(pass);
-                    registration.addNewPatient(name, surname, login, password);
+                    RegistrationCommand command = new RegistrationCommand(scanner, registration);
+                    command.registrationCommand();
                     break;
                 }
                 case "3":
